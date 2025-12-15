@@ -17,6 +17,7 @@ export default function HomeScreen({ navigation }) {
   const [followersFile, setFollowersFile] = useState(null);
   const [followingFile, setFollowingFile] = useState(null);
   const [loading, setLoading] = useState(false);
+  const [errorMessage, setErrorMessage] = useState(null);
 
   const pickDocument = async (type) => {
     try {
@@ -96,7 +97,8 @@ export default function HomeScreen({ navigation }) {
       const results = compareFollowers(followers, following);
       navigation.navigate('Results', { results });
     } catch (error) {
-      Alert.alert('Error', error.message);
+      setErrorMessage(error.message);
+      setTimeout(() => setErrorMessage(null), 5000);
       console.error('Analysis error:', error);
     } finally {
       setLoading(false);
@@ -104,8 +106,9 @@ export default function HomeScreen({ navigation }) {
   };
 
   return (
-    <ScrollView style={styles.container}>
-      <View style={styles.content}>
+    <>
+      <ScrollView style={styles.container}>
+        <View style={styles.content}>
         <View style={styles.header}>
           <Image 
             source={require('../../logo.png')} 
@@ -118,65 +121,71 @@ export default function HomeScreen({ navigation }) {
           </Text>
         </View>
 
-        <View style={styles.card}>
-          <Text style={styles.cardTitle}>📥 How to Get Your Instagram Data</Text>
-          <View style={styles.instructionsList}>
-            <View style={styles.instructionItem}>
-              <View style={styles.stepBadge}>
-                <Text style={styles.stepNumber}>1</Text>
+        <View style={styles.cardContainer}>
+          <View style={styles.card}>
+            <Text style={styles.cardTitle}>How to Get Your Instagram Data</Text>
+            <View style={styles.instructionsGrid}>
+            <View style={styles.instructionColumn}>
+              <View style={styles.instructionItem}>
+                <View style={styles.stepBadge}>
+                  <Text style={styles.stepNumber}>1</Text>
+                </View>
+                <View style={styles.instructionContent}>
+                  <Text style={styles.instruction}>Profile → Menu → Download Data</Text>
+                </View>
               </View>
-              <View style={styles.instructionContent}>
-                <Text style={styles.instruction}>Open Instagram app</Text>
-              </View>
-            </View>
-            
-            <View style={styles.instructionItem}>
-              <View style={styles.stepBadge}>
-                <Text style={styles.stepNumber}>2</Text>
-              </View>
-              <View style={styles.instructionContent}>
-                <Text style={styles.instruction}>Settings → Security → Download Data</Text>
-              </View>
-            </View>
-            
-            <View style={styles.instructionItem}>
-              <View style={styles.stepBadge}>
-                <Text style={styles.stepNumber}>3</Text>
-              </View>
-              <View style={styles.instructionContent}>
-                <Text style={styles.instruction}>Request download (format: JSON)</Text>
+              
+              <View style={styles.instructionItem}>
+                <View style={styles.stepBadge}>
+                  <Text style={styles.stepNumber}>2</Text>
+                </View>
+                <View style={styles.instructionContent}>
+                  <Text style={styles.instruction}>Request Download (JSON format)</Text>
+                </View>
               </View>
             </View>
-            
-            <View style={styles.instructionItem}>
-              <View style={styles.stepBadge}>
-                <Text style={styles.stepNumber}>4</Text>
+
+            <View style={styles.instructionColumn}>
+              <View style={styles.instructionItem}>
+                <View style={styles.stepBadge}>
+                  <Text style={styles.stepNumber}>3</Text>
+                </View>
+                <View style={styles.instructionContent}>
+                  <Text style={styles.instruction}>Wait for email (4-48 hours)</Text>
+                </View>
               </View>
-              <View style={styles.instructionContent}>
-                <Text style={styles.instruction}>Wait for email (4-48 hours)</Text>
+              
+              <View style={styles.instructionItem}>
+                <View style={styles.stepBadge}>
+                  <Text style={styles.stepNumber}>4</Text>
+                </View>
+                <View style={styles.instructionContent}>
+                  <Text style={styles.instruction}>Download ZIP and extract</Text>
+                </View>
               </View>
             </View>
-            
-            <View style={styles.instructionItem}>
-              <View style={styles.stepBadge}>
-                <Text style={styles.stepNumber}>5</Text>
+
+            <View style={styles.instructionColumn}>
+              <View style={styles.instructionItem}>
+                <View style={styles.stepBadge}>
+                  <Text style={styles.stepNumber}>5</Text>
+                </View>
+                <View style={styles.instructionContent}>
+                  <Text style={styles.instruction}>Open followers_and_following folder</Text>
+                </View>
               </View>
-              <View style={styles.instructionContent}>
-                <Text style={styles.instruction}>Extract the ZIP file</Text>
-              </View>
-            </View>
-            
-            <View style={styles.instructionItem}>
-              <View style={styles.stepBadge}>
-                <Text style={styles.stepNumber}>6</Text>
-              </View>
-              <View style={styles.instructionContent}>
-                <Text style={styles.instruction}>Find these files:</Text>
-                <Text style={styles.instructionSub}>• followers_1.json</Text>
-                <Text style={styles.instructionSub}>• following.json</Text>
+              
+              <View style={styles.instructionItem}>
+                <View style={styles.stepBadge}>
+                  <Text style={styles.stepNumber}>6</Text>
+                </View>
+                <View style={styles.instructionContent}>
+                  <Text style={styles.instruction}>Upload followers_1.json + following.json</Text>
+                </View>
               </View>
             </View>
           </View>
+        </View>
         </View>
 
         <View style={styles.section}>
@@ -186,10 +195,24 @@ export default function HomeScreen({ navigation }) {
             <TouchableOpacity
               style={[styles.button, followersFile && styles.buttonSelected]}
               onPress={() => pickDocument('followers')}
+              onMouseEnter={(e) => {
+                if (!followersFile) {
+                  e.currentTarget.style.borderColor = '#9C27B0';
+                  e.currentTarget.style.transform = 'translateY(-2px) scale(1.02)';
+                  e.currentTarget.style.boxShadow = '0 8px 16px rgba(156, 39, 176, 0.3)';
+                }
+              }}
+              onMouseLeave={(e) => {
+                if (!followersFile) {
+                  e.currentTarget.style.borderColor = '#E91E63';
+                  e.currentTarget.style.transform = 'translateY(0) scale(1)';
+                  e.currentTarget.style.boxShadow = '0 6px 10px rgba(233, 30, 99, 0.25)';
+                }
+              }}
             >
               <View style={styles.buttonContent}>
-                <Text style={styles.buttonEmoji}>👥</Text>
-                <Text style={styles.buttonTitle}>
+                <Text style={styles.buttonEmoji}>👤</Text>
+                <Text style={[styles.buttonTitle, followersFile && styles.buttonTitleSelected]}>
                   {followersFile ? '✓ Followers' : 'Followers'}
                 </Text>
                 {followersFile && (
@@ -203,10 +226,24 @@ export default function HomeScreen({ navigation }) {
             <TouchableOpacity
               style={[styles.button, followingFile && styles.buttonSelected]}
               onPress={() => pickDocument('following')}
+              onMouseEnter={(e) => {
+                if (!followingFile) {
+                  e.currentTarget.style.borderColor = '#9C27B0';
+                  e.currentTarget.style.transform = 'translateY(-2px) scale(1.02)';
+                  e.currentTarget.style.boxShadow = '0 8px 16px rgba(156, 39, 176, 0.3)';
+                }
+              }}
+              onMouseLeave={(e) => {
+                if (!followingFile) {
+                  e.currentTarget.style.borderColor = '#E91E63';
+                  e.currentTarget.style.transform = 'translateY(0) scale(1)';
+                  e.currentTarget.style.boxShadow = '0 6px 10px rgba(233, 30, 99, 0.25)';
+                }
+              }}
             >
               <View style={styles.buttonContent}>
-                <Text style={styles.buttonEmoji}>➕</Text>
-                <Text style={styles.buttonTitle}>
+                <Text style={styles.buttonEmoji}>➡️</Text>
+                <Text style={[styles.buttonTitle, followingFile && styles.buttonTitleSelected]}>
                   {followingFile ? '✓ Following' : 'Following'}
                 </Text>
                 {followingFile && (
@@ -219,35 +256,49 @@ export default function HomeScreen({ navigation }) {
           </View>
         </View>
 
-        <TouchableOpacity
-          style={[
-            styles.analyzeButton,
-            (!followersFile || !followingFile || loading) && styles.analyzeButtonDisabled
-          ]}
-          onPress={analyzeData}
-          disabled={!followersFile || !followingFile || loading}
-        >
-          {loading ? (
-            <ActivityIndicator color="#fff" />
-          ) : (
-            <Text style={styles.analyzeButtonText}>Analyze Followers</Text>
-          )}
-        </TouchableOpacity>
+        <View style={styles.analyzeContainer}>
+          <TouchableOpacity
+            style={[
+              styles.analyzeButton,
+              (!followersFile || !followingFile || loading) && styles.analyzeButtonDisabled
+            ]}
+            onPress={analyzeData}
+            disabled={!followersFile || !followingFile || loading}
+          >
+            {loading ? (
+              <ActivityIndicator color="#fff" />
+            ) : (
+              <Text style={styles.analyzeButtonText}>Analyze Followers</Text>
+            )}
+          </TouchableOpacity>
+        </View>
 
         <View style={styles.infoCard}>
           <Text style={styles.infoText}>
             Your data stays private - all processing happens on your device
           </Text>
         </View>
+
+        <View style={styles.footer}>
+          <Text style={styles.footerText}>© 2025 Noa Kirsh. All rights reserved.</Text>
+        </View>
       </View>
-    </ScrollView>
+      </ScrollView>
+      
+      {errorMessage && (
+        <View style={styles.errorTooltip}>
+          <Text style={styles.errorText}>❌ {errorMessage}</Text>
+        </View>
+      )}
+    </>
   );
 }
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#fafafa',
+    background: 'linear-gradient(to bottom, #fff5f8 0%, #fafafa 100%)',
+    backgroundColor: '#fff5f8',
   },
   content: {
     padding: 20,
@@ -257,19 +308,15 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   logo: {
-    width: 280,
-    height: 280,
-    marginBottom: 8,
+    width: 200,
+    height: 200,
+    marginBottom: 12,
     marginTop: 20,
   },
   headerTitle: {
     fontSize: 28,
     fontWeight: 'bold',
-    background: 'linear-gradient(135deg, #9C27B0 0%, #E91E63 50%, #FF9800 100%)',
-    WebkitBackgroundClip: 'text',
-    WebkitTextFillColor: 'transparent',
-    backgroundClip: 'text',
-    color: '#9C27B0',
+    color: '#E91E63',
     marginBottom: 8,
     textAlign: 'center',
   },
@@ -278,32 +325,46 @@ const styles = StyleSheet.create({
     color: '#666',
     textAlign: 'center',
   },
+  cardContainer: {
+    alignItems: 'center',
+    marginBottom: 28,
+  },
   card: {
     backgroundColor: '#fff',
     borderRadius: 20,
     padding: 24,
-    marginBottom: 28,
-    shadowColor: '#9C27B0',
+    shadowColor: '#E91E63',
     shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.15,
+    shadowOpacity: 0.2,
     shadowRadius: 12,
     elevation: 5,
-    borderWidth: 1,
-    borderColor: '#f0f0f0',
+    borderWidth: 3,
+    borderColor: '#E91E63',
+    maxWidth: 700,
+    width: '100%',
   },
   cardTitle: {
     fontSize: 20,
     fontWeight: '700',
-    color: '#1a1a1a',
-    marginBottom: 20,
+    color: '#E91E63',
+    marginBottom: 24,
     textAlign: 'center',
+    paddingBottom: 16,
+    borderBottomWidth: 2,
+    borderBottomColor: '#fce4ec',
   },
-  instructionsList: {
+  instructionsGrid: {
+    flexDirection: 'row',
     gap: 16,
+  },
+  instructionColumn: {
+    flex: 1,
+    gap: 14,
   },
   instructionItem: {
     flexDirection: 'row',
     alignItems: 'flex-start',
+    minHeight: 32,
   },
   stepBadge: {
     width: 32,
@@ -323,11 +384,12 @@ const styles = StyleSheet.create({
   },
   instructionContent: {
     flex: 1,
+    flexWrap: 'wrap',
   },
   instruction: {
-    fontSize: 15,
+    fontSize: 13,
     color: '#333',
-    lineHeight: 22,
+    lineHeight: 18,
     fontWeight: '500',
   },
   instructionSub: {
@@ -341,51 +403,62 @@ const styles = StyleSheet.create({
     marginBottom: 24,
   },
   sectionTitle: {
-    fontSize: 20,
+    fontSize: 22,
     fontWeight: '700',
-    color: '#1a1a1a',
-    marginBottom: 16,
+    color: '#E91E63',
+    marginBottom: 20,
     textAlign: 'center',
   },
   buttonsRow: {
     flexDirection: 'row',
-    gap: 12,
-  },
-  button: {
-    flex: 1,
-    backgroundColor: '#fff',
-    borderRadius: 16,
-    padding: 24,
-    alignItems: 'center',
-    borderWidth: 2,
-    borderColor: '#e0e0e0',
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.08,
-    shadowRadius: 8,
-    elevation: 3,
-    minHeight: 140,
+    gap: 16,
     justifyContent: 'center',
   },
-  buttonSelected: {
+  button: {
+    width: 180,
+    background: 'linear-gradient(135deg, #ffffff 0%, #f9f9f9 100%)',
+    backgroundColor: '#fff',
+    borderRadius: 16,
+    padding: 20,
+    alignItems: 'center',
+    borderWidth: 3,
     borderColor: '#E91E63',
-    backgroundColor: '#fce4ec',
     shadowColor: '#E91E63',
-    shadowOpacity: 0.2,
+    shadowOffset: { width: 0, height: 6 },
+    shadowOpacity: 0.25,
+    shadowRadius: 10,
+    elevation: 6,
+    minHeight: 140,
+    justifyContent: 'center',
+    cursor: 'pointer',
+    transition: 'all 0.2s ease',
+  },
+  buttonSelected: {
+    borderColor: '#9C27B0',
+    backgroundColor: '#f3e5f5',
+    shadowColor: '#9C27B0',
+    shadowOffset: { width: 0, height: 8 },
+    shadowOpacity: 0.35,
+    shadowRadius: 12,
+    transform: 'translateY(-4px) scale(1.03)',
+    elevation: 8,
   },
   buttonContent: {
     alignItems: 'center',
     width: '100%',
   },
   buttonEmoji: {
-    fontSize: 32,
+    fontSize: 40,
     marginBottom: 12,
   },
   buttonTitle: {
-    fontSize: 16,
+    fontSize: 18,
     fontWeight: '700',
     color: '#1a1a1a',
     textAlign: 'center',
+  },
+  buttonTitleSelected: {
+    color: '#9C27B0',
   },
   buttonSubtitle: {
     fontSize: 11,
@@ -393,13 +466,17 @@ const styles = StyleSheet.create({
     marginTop: 6,
     textAlign: 'center',
   },
+  analyzeContainer: {
+    alignItems: 'center',
+    marginBottom: 16,
+  },
   analyzeButton: {
+    width: 240,
     background: 'linear-gradient(135deg, #9C27B0 0%, #E91E63 50%, #FF9800 100%)',
     backgroundColor: '#E91E63',
     borderRadius: 12,
     padding: 18,
     alignItems: 'center',
-    marginBottom: 16,
     shadowColor: '#9C27B0',
     shadowOffset: { width: 0, height: 4 },
     shadowOpacity: 0.3,
@@ -425,6 +502,38 @@ const styles = StyleSheet.create({
   infoText: {
     fontSize: 14,
     color: '#6A1B9A',
+    textAlign: 'center',
+  },
+  footer: {
+    marginTop: 20,
+    paddingTop: 16,
+    borderTopWidth: 1,
+    borderTopColor: '#f0f0f0',
+    alignItems: 'center',
+  },
+  footerText: {
+    fontSize: 12,
+    color: '#999',
+  },
+  errorTooltip: {
+    position: 'absolute',
+    bottom: 20,
+    left: 20,
+    right: 20,
+    backgroundColor: '#f44336',
+    borderRadius: 12,
+    padding: 16,
+    zIndex: 1000,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: -4 },
+    shadowOpacity: 0.3,
+    shadowRadius: 8,
+    elevation: 10,
+  },
+  errorText: {
+    color: '#fff',
+    fontSize: 14,
+    fontWeight: '600',
     textAlign: 'center',
   },
 });
