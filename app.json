@@ -1,0 +1,19 @@
+{
+  "expo": {
+    "name": "FollowMe",
+    "slug": "followme",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "userInterfaceStyle": "light",
+    "ios": {
+      "supportsTablet": false,
+      "bundleIdentifier": "com.followme.app",
+      "buildNumber": "1.0.0"
+    },
+    "android": {
+      "package": "com.followme.app"
+    },
+    "plugins": []
+  }
+}
+

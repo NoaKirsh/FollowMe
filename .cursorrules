@@ -1,0 +1,70 @@
+# Cursor AI Rules for FollowMe
+
+## Project Overview
+React Native web app (Expo SDK 54) for analyzing Instagram followers. Shows non-reciprocal follows and mutual connections.
+
+## Tech Stack
+- React Native 0.76.5 / React Native Web 0.19
+- Expo SDK 54
+- React Navigation 6
+- JavaScript (no TypeScript)
+
+## Code Standards
+
+### Components
+- Functional components only
+- React Hooks for state management
+- StyleSheet for all styling (no inline styles)
+- Keep components under 50 lines when reasonable
+
+### Patterns
+- Async/await for file operations
+- Try-catch with user-friendly error messages
+- Platform checks for web vs native file handling
+- Set data structures for comparisons (O(1) lookup)
+
+### File Structure
+```
+src/screens/  - UI components
+src/utils/    - Business logic
+App.js        - Navigation
+```
+
+## Web Compatibility
+- Check file.file exists (web) vs file.uri (native)
+- Web uses File.text(), native uses FileSystem.readAsStringAsync()
+- Test in browser first, verify on iPhone Safari
+- Both devices must be on same Wi-Fi for testing
+
+## Data Handling
+- Validate Instagram JSON structure before parsing
+- Handle both followers array and following object formats
+- Use Set for efficient username comparisons
+- Account for malformed or incomplete data
+
+## Performance
+- Use Set instead of array.includes() for follower lookups
+- Single-pass array operations when possible
+- FlatList for large lists with proper keyExtractor
+
+## Common Mistakes to Avoid
+- Don't use class components
+- Don't mix File API and FileSystem without platform checks
+- Don't commit node_modules or .expo
+- Don't hardcode values that should be configurable
+- Don't use AI-generated code formatting or comments. Write code and docs in a clear, human style.
+
+## Development Focus
+Web version is primary since SDK 54 has native iOS bugs. Keep PC and phone on same Wi-Fi for iPhone testing.
+
+## Instagram Data Format
+```javascript
+// followers_1.json
+[{ "string_list_data": [{ "value": "username", "timestamp": 123 }] }]
+
+// following.json  
+{ "relationships_following": [{ "title": "username", "string_list_data": [{ "timestamp": 123 }] }] }
+```
+
+## Privacy
+All processing client-side. No server communication. No analytics or tracking.
